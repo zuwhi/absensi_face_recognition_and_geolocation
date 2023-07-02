@@ -3,11 +3,19 @@
 <div class="section" id="user-section">
     <div id="user-detail">
         <div class="avatar">
+            @if (!empty(Auth::guard('karyawan')->user()->foto))
+                @php
+                    $path = asset('profil/karyawan/'.Auth::guard('karyawan')->user()->foto);
+               @endphp
+            <img src="{{url($path) }}" alt="avatar" class="imaged w64 rounded">
+            @else
             <img src="assets/img/sample/avatar/avatar1.jpg" alt="avatar" class="imaged w64 rounded">
+            @endif
+
         </div>
         <div id="user-info">
             <h2 id="user-name">{{ $profil->nama_lengkap }}</h2>
-            <span id="user-role">{{ $profil->jabatan }}</span>
+            <span id="user-role">{{ $namaJabatan }}</span>
         </div>
     </div>
 </div>
@@ -38,7 +46,7 @@
                 </div> --}}
                 <div class="item-menu text-center">
                     <div class="menu-icon">
-                        <a href="" class="warning" style="font-size: 40px;">
+                        <a href="/presensi/riwayat" class="warning" style="font-size: 40px;">
                             <ion-icon name="document-text"></ion-icon>
                         </a>
                     </div>
@@ -206,7 +214,7 @@
                             <div class="in">
                                 <div>
                                     <b>{{ $lb->nama_lengkap }}</b><br>
-                                    <small>{{ $lb->jabatan }}</small>
+                                    <small>{{ $lb->nama_jabatan }}</small>
                                 </div>
                                 
                                 <span class="badge {{ $lb->jam_in > '07:00' ? 'bg-warning' : 'bg-success' }}">{{ $lb->jam_in }}</span>

@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+
     /**
      * Register any application services.
      */
@@ -20,8 +21,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (env(key: 'APP_ENV') !== 'local') {
-            URL::forceScheme(scheme: 'https');
+        
+        if (env('APP_ENV') !== 'local') {
+            \Illuminate\Support\Facades\URL::forceScheme('http');
         }
         // enable https
         // \Illuminate\Support\Facades\URL::forceScheme('https');

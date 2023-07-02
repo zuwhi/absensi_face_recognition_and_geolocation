@@ -78,7 +78,8 @@ crossorigin=""></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js" integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+{{-- <script src="../assets/js/jquery.js"></script>
+<script src="../assets/js/face-api.min.js"></script>
+--}}
 
-    
-
-    @stack('myscript')
+@stack('myscript')

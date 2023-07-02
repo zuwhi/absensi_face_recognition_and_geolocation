@@ -17,8 +17,6 @@ return new class extends Migration
             $table->date('tgl_presensi');
             $table->time('jam_in');
             $table->time('jam_out')->nullable();
-            $table->string('foto_in', 255)->nullable();
-            $table->string('foto_out', 255)->nullable();
             $table->text('location_in');
             $table->text('location_out')->nullable();
             $table->timestamps();

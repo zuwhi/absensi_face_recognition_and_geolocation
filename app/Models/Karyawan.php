@@ -14,7 +14,18 @@ class Karyawan extends Authenticatable
     protected $primaryKey = 'nik';
     protected $fillable = [
         'nik',
-        'nama_lengkap', 'jabatan', 'telepon',
-        'password', 'remember_token'
+        'nama_lengkap',
+        'foto',
+        'jabatan_id',
+        'telepon',
+        'password',
+        'verif_1',
+        'verif_2',
+        'remember_token',
     ];
+
+    public function jabatan()
+    {
+        return $this->belongsTo(Jabatan::class);
+    }
 }

@@ -34,8 +34,6 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="crossorigin=""/>
 <div class="row" style="margin-top: 70px">
     <div class="col">
-      {{-- {{ $cekOut }} --}}
-    
       <video id="videoElement" autoplay></video>
       <input type="hidden" name="lokasi" id="lokasi">
     </div>

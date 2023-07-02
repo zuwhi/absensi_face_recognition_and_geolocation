@@ -15,6 +15,8 @@
     @endif
     <div class="right"></div>
 </div>
+<div class="" style="margin-bottom : 65px"></div>
+
 @endsection
 
 @section('content')
@@ -65,7 +67,7 @@ canvas {
 <script src="../assets/js/face-api.min.js"></script>
 
 
-<div class="row" style="margin-top: 70px">
+<div class="row">
     <div class="col">
         <div class="webcam">
             <video id="video" width="600" height="450" autoplay>
@@ -177,12 +179,12 @@ function startWebcam() {
 
 
 function getLabeledFaceDescriptions() {
-  const labels = ["Rehan", "Heisenberg", "Jokowi"];
+  const labels = ["{{ $nik }}"];
   return Promise.all(
     labels.map(async (label) => {
       const descriptions = [];
       for (let i = 1; i <= 2; i++) {
-        const img = await faceapi.fetchImage(`../labels/${label}/${i}.jpg`);
+        const img = await faceapi.fetchImage(`../wajah/{{ $nik }}/${i}.jpg`);
         const detections = await faceapi
           .detectSingleFace(img)
           .withFaceLandmarks()
@@ -228,7 +230,7 @@ video.addEventListener("play", async () => {
       });
       
       drawBox.draw(canvas);
-      if(result.label == 'Jokowi') {
+      if(result.label == '{{ $nik }}') {
         clearInterval(intervalId);
         var lokasi = $('#lokasi').val()
         var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');

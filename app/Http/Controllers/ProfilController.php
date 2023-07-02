@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use PhpParser\Node\Stmt\Return_;
 
 class ProfilController extends Controller
 {
@@ -70,14 +71,29 @@ class ProfilController extends Controller
     public function update(Request $request)
     {
         $nik =  Auth::guard('karyawan')->user()->nik;
-        $data = [
-            'nama_lengkap' => $request->nama_lengkap,
-            'telepon' => $request->telepon
-        ];
-       
+        if (empty($request->password)) {
+            $data = [
+                'nama_lengkap' => $request->nama_lengkap,
+                'telepon' => $request->telepon
+            ];
+        } else {
+            $data = [
+                'nama_lengkap' => $request->nama_lengkap,
+                'telepon' => $request->telepon,
+                'password' => Hash::make($request->password)
+            ];
+        }
 
-        DB::table('karyawan')->where('nik',$nik)->update($data);
-        return redirect('/profil');
+        $edit = DB::table('karyawan')->where('nik', $nik)->update($data);
+        
+     
+
+        if($edit){
+            return redirect('/');
+        }else{
+
+            return redirect('/profil');
+        }
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,6 +13,10 @@ class AuthController extends Controller
     {
         $credentials = $request->only('nik', 'password');
         if (Auth::guard('karyawan')->attempt($credentials)) {
+            $jabatan = Auth::guard('karyawan')->user()->jabatan->nama_jabatan;
+            if ($jabatan == 'admin') {
+                return redirect()->intended('/admin');
+            }
             return redirect()->intended('/dashboard');
         } else {
             return redirect('/')->with(['warning' => 'nik atau password salah']);
@@ -25,7 +30,8 @@ class AuthController extends Controller
             return redirect('/');
         }
     }
-    public function index(){
+    public function index()
+    {
         echo 'njir';
     }
 }

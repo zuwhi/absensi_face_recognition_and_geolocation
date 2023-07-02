@@ -2,16 +2,139 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\Karyawan;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
 
 class PresensiController extends Controller
 {
+    public function prosesVerif(Request $request)
+    {
+        $nik = $request->nik;
+        $image = $request->image;
+        $folderPath = "wajah/" . $nik . "/";
+        $image_part = explode(";base64", $image);
+        $image_base64 = base64_decode($image_part[1]);
+        $cek = DB::table('karyawan')->where('nik', $nik)->pluck('verif_1')->first();
+
+        if ($cek == 'NULL') {
+            $fileName = "1.jpg";
+            $data_verif = [
+                'verif_1' => $fileName
+            ];
+        } else {
+            $fileName = "2.jpg";
+            $data_verif = [
+                'verif_2' => $fileName
+            ];
+        }
+        $file = $folderPath . $fileName;
+
+
+
+        $update = DB::table('karyawan')->where('nik', $nik)->update($data_verif);
+
+        if ($update) {
+            Storage::disk('public')->put($file, $image_base64);
+            $pesan = '1';
+        } else {
+            $pesan = '0';
+        }
+
+        $response = [
+            'pesan' => $pesan,
+        ];
+        return response()->json($response);
+    }
+    public function verifwajah(Request $request)
+    {
+        $nik = Auth::guard('karyawan')->user()->nik;
+
+        $cek = DB::table('karyawan')->where('nik', $nik)->pluck('verif_1')->first();
+
+        ($cek == 'NULL') ? $verif = 0 : $verif = 1;
+        return view('profil.verifikasi', compact('nik', 'verif'));
+    }
+    public function getRiwayat(Request $request)
+    {
+        $bulan = $request->bulan;
+        $tahun = $request->tahun;
+        $nik = Auth::guard('karyawan')->user()->nik;
+
+        $riwayat = DB::table('presensi')
+            ->whereRaw("MONTH(tgl_presensi)='" . $bulan . "'")
+            ->whereRaw("YEAR(tgl_presensi)='" . $tahun . "'")
+            ->where('nik', $nik)->get();
+
+
+        return view('presensi.detail', compact('riwayat'));
+    }
+    public function riwayat(Request $request)
+    {
+        $karyawan =  Auth::guard('karyawan')->user();
+        $daftarBulan = ['', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
+        return view('presensi.riwayat', compact('karyawan', 'daftarBulan'));
+    }
+
+
+    public function profilEdit(Request $request)
+    {
+        $karyawan =  Auth::guard('karyawan')->user();
+        return view('profil.edit', compact('karyawan', 'request'));
+    }
+
+    public function profilUpdate(Request $request)
+    {
+        $nik =  Auth::guard('karyawan')->user()->nik;
+        $fotoKaryawan = DB::table('karyawan')->where('nik', $nik)->first();
+        if ($request->hasFile('foto')) {
+            $foto = $nik . "." . $request->file('foto')->getClientOriginalExtension();
+        } else {
+            $foto = $fotoKaryawan->foto;
+        }
+
+
+        if (empty($request->password)) {
+            $data = [
+                'nama_lengkap' => $request->nama_lengkap,
+                'telepon' => $request->telepon,
+                'foto' => $foto
+            ];
+        } else {
+            $data = [
+                'nama_lengkap' => $request->nama_lengkap,
+                'telepon' => $request->telepon,
+                'password' => Hash::make($request->password),
+                'foto' => $foto
+            ];
+        }
+
+        $edit = DB::table('karyawan')->where('nik', $nik)->update($data);
+
+
+
+        if ($edit) {
+            if ($request->hasFile('foto')) {
+                $folderPath = 'profil/karyawan/' . $foto;
+                // $request->file('foto')->storeAs($folderPath, $foto);
+
+
+                Storage::disk('public')->put($folderPath, file_get_contents($request->file('foto')));
+            }
+            return Redirect::back()->with(['success' => 'Profilmu berhasil di edit']);
+        } else {
+            return Redirect::back()->with(['error' => 'Maaf terjadi kesalahan, gagal edit profil']);
+        }
+    }
+
+
     public function absen()
     {
         $nik = Auth::guard('karyawan')->user()->nik;
@@ -26,7 +149,7 @@ class PresensiController extends Controller
 
 
 
-        return view('presensi.absen', compact('cek', 'cekPulang'));
+        return view('presensi.absen', compact('cek', 'cekPulang', 'nik'));
     }
 
     public function prosesAbsen(Request $request)

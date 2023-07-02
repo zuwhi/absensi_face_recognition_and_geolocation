@@ -20,20 +20,21 @@
             </div>
         </div>
     </a>
-  
-    <a href="/profil" class="item">
-        <div class="col">
-            <ion-icon name="people-outline" role="img" class="md hydrated" aria-label="people outline"></ion-icon>
-            <strong>Profile</strong>
-        </div>
-    </a>
-    <a href="/" class="item">
+    <a href="/proseslogout" class="item">
         <div class="col">
             <ion-icon name="document-text-outline" role="img" class="md hydrated"
                 aria-label="document text outline"></ion-icon>
             <strong>Admin</strong>
         </div>
     </a>
+  
+    <a href="/presensi/edit" class="item {{ request()->is('profil') ? 'active' : '' }}">
+        <div class="col">
+            <ion-icon name="people-outline" role="img" class="md hydrated" aria-label="people outline"></ion-icon>
+            <strong>Profile</strong>
+        </div>
+    </a>
+   
 
 
 </div>

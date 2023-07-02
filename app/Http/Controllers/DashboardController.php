@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
+    public function menu()
+    {
+        return view('admin.dasboard');
+    }
     public function index()
     {
         $profil = Auth::guard('karyawan')->user();
@@ -33,14 +38,22 @@ class DashboardController extends Controller
             ->whereRaw('YEAR(tgl_presensi)="' . $tahunini . '"')->first();
 
         $leaderboard = DB::table('presensi')
-                        ->join('karyawan','presensi.nik','=', 'karyawan.nik')
-                        ->where('tgl_presensi', $today)
-                        ->get();
-       
+            ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik')
+            ->join('jabatan', 'karyawan.jabatan_id', '=', 'jabatan.id')
+            ->where('tgl_presensi', $today)
+            ->orderBy('jam_in', 'asc')
+            ->get();
+
+
 
 
         $daftarBulan = ['', 'januari', 'februari', 'maret', 'april', 'mei', 'juni', 'juli', 'agustus', 'september', 'oktober', 'november', 'desember'];
         $namaBulan = $daftarBulan[$bulanini * 1];
-        return view('dashboard.dashboard', compact('profil', 'infoMasuk', 'infoKeluar', 'historybulanini', 'namaBulan', 'rekapBulan', 'leaderboard'));
+
+        $namaJabatan = DB::table('karyawan')
+            ->join('jabatan', 'karyawan.jabatan_id', '=', 'jabatan.id')
+            ->where('karyawan.nik', $nik)
+            ->value('jabatan.nama_jabatan');
+        return view('dashboard.dashboard', compact('namaJabatan', 'profil', 'infoMasuk', 'infoKeluar', 'historybulanini', 'namaBulan', 'rekapBulan', 'leaderboard'));
     }
 }
